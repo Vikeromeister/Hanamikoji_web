@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hanamikoji</title>
+  <link rel="stylesheet" href="../src/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <h1>Hanamikoji</h1>
+      <p>Három-négy kártyás akciók két játékos számára ugyanazon a számítógépen.</p>
+    </header>
+
+    <section class="status-panel">
+      <div class="status-item"><strong>Játékos:</strong> <span id="current-player">1</span></div>
+      <div class="status-item"><strong>Kör:</strong> <span id="turn-number">1</span> / 8</div>
+      <div class="status-item"><strong>Pakli:</strong> <span id="deck-count">9</span> lap maradt</div>
+    </section>
+
+    <section id="message" class="message-panel">Kattints egy akcióra a kezdéshez.</section>
+
+    <section id="board" class="board-panel"></section>
+
+    <section class="content-row">
+      <section class="hand-panel">
+        <h2>Jelenlegi kéz</h2>
+        <div id="hand-list" class="hand-list"></div>
+      </section>
+
+      <section class="controls-panel">
+        <h2>Akciók</h2>
+        <div class="action-buttons">
+          <button id="secret-button">1. Titok</button>
+          <button id="tradeoff-button">2. Kompromisszum</button>
+          <button id="gift-button">3. Ajándék</button>
+          <button id="competition-button">4. Versenyzés</button>
+        </div>
+        <div class="confirm-panel">
+          <button id="confirm-button" class="primary">Megerősítés</button>
+          <button id="restart-button" class="secondary">Új játék</button>
+        </div>
+      </section>
+    </section>
+
+    <section id="offer-panel" class="offer-panel hidden"></section>
+
+    <section id="result-panel" class="result-panel hidden"></section>
+  </div>
+
+  <script type="module" src="../src/main.js"></script>
+</body>
+</html>
