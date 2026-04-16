@@ -1,11 +1,32 @@
 import * as Game from './game.js';
 
+const GEISHA_COLORS = {
+  1: 'geisha-1',
+  2: 'geisha-2',
+  3: 'geisha-3',
+  4: 'geisha-4',
+  5: 'geisha-5',
+  6: 'geisha-6',
+  7: 'geisha-7'
+};
+
+const COLOR_RGB = {
+  'geisha-1': 'rgb(231, 76, 60)',
+  'geisha-2': 'rgb(52, 152, 219)',
+  'geisha-3': 'rgb(46, 204, 113)',
+  'geisha-4': 'rgb(155, 89, 182)',
+  'geisha-5': 'rgb(230, 126, 34)',
+  'geisha-6': 'rgb(241, 196, 15)',
+  'geisha-7': 'rgb(233, 30, 99)'
+};
+
 const elements = {
   currentPlayer: document.getElementById('current-player'),
   turnNumber: document.getElementById('turn-number'),
   deckCount: document.getElementById('deck-count'),
   message: document.getElementById('message'),
-  board: document.getElementById('board'),
+  boardContainer: document.getElementById('board-container'),
+  deckContainer: document.getElementById('deck-container'),
   handList: document.getElementById('hand-list'),
   secretButton: document.getElementById('secret-button'),
   tradeoffButton: document.getElementById('tradeoff-button'),
@@ -29,48 +50,104 @@ function updateStatus() {
 
 function buildBoard() {
   const rows = Game.getGeishaRows();
-  const table = document.createElement('table');
-  table.className = 'geisha-board';
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Gésa</th>
-        <th>1. játékos</th>
-        <th>2. játékos</th>
-        <th>Elnyerő</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${rows
-        .map(
-          (row) => `
-          <tr class="geisha-row ${row.owner === 1 ? 'player-one' : ''} ${row.owner === 2 ? 'player-two' : ''}">
-            <td>${row.name}</td>
-            <td>${row.player1}</td>
-            <td>${row.player2}</td>
-            <td>${row.owner === 0 ? '—' : row.owner + '. játékos'}</td>
-          </tr>`
-        )
-        .join('')}
-    </tbody>
-  `;
-  elements.board.innerHTML = '';
-  elements.board.appendChild(table);
+  elements.boardContainer.innerHTML = '';
+
+  rows.forEach((row) => {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'geisha-row';
+
+    // Player 1 side with tokens
+    const p1Side = document.createElement('div');
+    p1Side.className = 'player-side';
+    p1Side.innerHTML = '<div class="player-label">1. játékos</div>';
+    const p1Tokens = document.createElement('div');
+    p1Tokens.className = 'tokens-display';
+    for (let i = 0; i < row.player1; i++) {
+      const token = document.createElement('div');
+      token.className = 'token';
+      token.style.color = COLOR_RGB[GEISHA_COLORS[row.id]];
+      p1Tokens.appendChild(token);
+    }
+    p1Side.appendChild(p1Tokens);
+
+    // Geisha card in center
+    const geishaDiv = document.createElement('div');
+    geishaDiv.className = `geisha-card ${GEISHA_COLORS[row.id]}`;
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'geisha-name';
+    nameDiv.textContent = row.name;
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'geisha-value';
+    valueDiv.textContent = `${row.value} pont`;
+    geishaDiv.appendChild(nameDiv);
+    geishaDiv.appendChild(valueDiv);
+
+    // Player 2 side with tokens
+    const p2Side = document.createElement('div');
+    p2Side.className = 'player-side';
+    p2Side.innerHTML = '<div class="player-label">2. játékos</div>';
+    const p2Tokens = document.createElement('div');
+    p2Tokens.className = 'tokens-display';
+    for (let i = 0; i < row.player2; i++) {
+      const token = document.createElement('div');
+      token.className = 'token';
+      token.style.color = COLOR_RGB[GEISHA_COLORS[row.id]];
+      p2Tokens.appendChild(token);
+    }
+    p2Side.appendChild(p2Tokens);
+
+    rowDiv.appendChild(p1Side);
+    rowDiv.appendChild(geishaDiv);
+    rowDiv.appendChild(p2Side);
+    elements.boardContainer.appendChild(rowDiv);
+  });
+}
+
+function buildDeck() {
+  elements.deckContainer.innerHTML = '';
+  
+  const deckDiv = document.createElement('div');
+  deckDiv.className = 'deck-container';
+  
+  const countDiv = document.createElement('div');
+  countDiv.className = 'deck-count';
+  countDiv.textContent = Game.state.deck.length;
+  
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'deck-card';
+  cardDiv.textContent = 'PAKLI';
+  
+  deckDiv.appendChild(countDiv);
+  deckDiv.appendChild(cardDiv);
+  elements.deckContainer.appendChild(deckDiv);
 }
 
 function buildHand() {
   const hand = Game.getHand(Game.state.currentPlayer);
   elements.handList.innerHTML = '';
+  
   hand.forEach((card, index) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = 'card-button';
-    button.textContent = `${index + 1}. ${Game.cardName(card)}`;
-    button.dataset.index = index.toString();
+    button.className = `card-button ${GEISHA_COLORS[card]}`;
+    
+    const numberDiv = document.createElement('div');
+    numberDiv.className = 'card-number';
+    numberDiv.textContent = index + 1;
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'card-name';
+    nameDiv.textContent = Game.cardName(card);
+    
+    button.appendChild(numberDiv);
+    button.appendChild(nameDiv);
+    
     button.disabled = !pendingAction || pendingAction.mode !== 'select';
+    
     if (pendingAction && pendingAction.selected.indexOf(index) !== -1) {
       button.classList.add('selected');
     }
+    
     button.addEventListener('click', () => handleCardClick(index));
     elements.handList.appendChild(button);
   });
@@ -79,9 +156,11 @@ function buildHand() {
 function buildOfferPanel() {
   elements.offerPanel.innerHTML = '';
   elements.offerPanel.classList.add('hidden');
+  
   if (!offerChoices) {
     return;
   }
+  
   elements.offerPanel.classList.remove('hidden');
   const title = document.createElement('p');
   title.className = 'offer-title';
@@ -101,20 +180,25 @@ function buildOfferPanel() {
 function buildResultPanel() {
   elements.resultPanel.innerHTML = '';
   elements.resultPanel.classList.add('hidden');
+  
   if (!Game.state.gameOver) {
     return;
   }
+  
   elements.resultPanel.classList.remove('hidden');
   const result = Game.getResultSummary();
+  
   const heading = document.createElement('h2');
   heading.textContent = 'Játék vége';
+  
   const details = document.createElement('div');
   details.className = 'result-details';
   details.innerHTML = `
-    <p>1. játékos: ${result.player1.score} pont, ${result.player1.geishaCount} gésa</p>
-    <p>2. játékos: ${result.player2.score} pont, ${result.player2.geishaCount} gésa</p>
-    <p>${result.winner === 0 ? 'Döntetlen.' : result.winner + '. játékos nyert.'}</p>
+    <p><strong>1. játékos:</strong> ${result.player1.score} pont, ${result.player1.geishaCount} gésa</p>
+    <p><strong>2. játékos:</strong> ${result.player2.score} pont, ${result.player2.geishaCount} gésa</p>
+    <p><strong>Nyertes:</strong> ${result.winner === 0 ? 'Döntetlen!' : result.winner + '. játékos'}</p>
   `;
+  
   elements.resultPanel.appendChild(heading);
   elements.resultPanel.appendChild(details);
 }
@@ -132,8 +216,10 @@ function setPendingAction(actionType) {
   if (Game.state.gameOver) {
     return;
   }
+  
   let max = 1;
   let prompt = '';
+  
   switch (actionType) {
     case 'secret':
       max = 1;
@@ -154,6 +240,7 @@ function setPendingAction(actionType) {
     default:
       return;
   }
+  
   pendingAction = {
     mode: 'select',
     type: actionType,
@@ -161,6 +248,7 @@ function setPendingAction(actionType) {
     maxSelection: max,
     prompt
   };
+  
   Game.state.message = prompt;
   offerChoices = null;
   render();
@@ -170,12 +258,14 @@ function handleCardClick(index) {
   if (!pendingAction || pendingAction.mode !== 'select') {
     return;
   }
+  
   const existingIndex = pendingAction.selected.indexOf(index);
   if (existingIndex >= 0) {
     pendingAction.selected.splice(existingIndex, 1);
   } else if (pendingAction.selected.length < pendingAction.maxSelection) {
     pendingAction.selected.push(index);
   }
+  
   render();
 }
 
@@ -183,13 +273,16 @@ function confirmSelection() {
   if (!pendingAction || pendingAction.mode !== 'select') {
     return;
   }
+  
   const player = Game.state.currentPlayer;
   const selected = [...pendingAction.selected].sort((a, b) => a - b);
+  
   if (selected.length !== pendingAction.maxSelection) {
-    Game.state.message = `Legalább ${pendingAction.maxSelection} kártyát kell kiválasztanod.`;
+    Game.state.message = `Pontosan ${pendingAction.maxSelection} kártyát kell kiválasztanod.`;
     render();
     return;
   }
+  
   switch (pendingAction.type) {
     case 'secret':
       Game.performSecret(player, selected[0]);
@@ -206,12 +299,14 @@ function confirmSelection() {
       prepareCompetitionResponse(player, selected);
       break;
   }
+  
   render();
 }
 
 function prepareGiftResponse(player, selectedIndex) {
   const hand = Game.getHand(player);
   const giftCards = selectedIndex.map((index) => hand[index]);
+  
   pendingAction = null;
   offerChoices = {
     title: 'Az ellenfél válasszon egy kártyát az ajánlatból.',
@@ -223,7 +318,8 @@ function prepareGiftResponse(player, selectedIndex) {
       render();
     }
   };
-  Game.state.message = 'Kattints a felajánlott kártyák közül arra, amelyik az ellenfélhez kerül.';
+  
+  Game.state.message = 'Az ellenfél választ az ajánlott kártyák közül.';
 }
 
 function prepareCompetitionResponse(player, selectedIndex) {
@@ -231,6 +327,7 @@ function prepareCompetitionResponse(player, selectedIndex) {
   const competitionCards = selectedIndex.map((index) => hand[index]);
   const firstPair = competitionCards.slice(0, 2);
   const secondPair = competitionCards.slice(2, 4);
+  
   pendingAction = null;
   offerChoices = {
     title: 'Az ellenfél válassza ki, melyik párt szeretné megszerezni.',
@@ -245,12 +342,14 @@ function prepareCompetitionResponse(player, selectedIndex) {
       render();
     }
   };
-  Game.state.message = 'Válassz egy párt. Az ellenfél ezt a párt kapja.';
+  
+  Game.state.message = 'Az ellenfél választ a párok közül.';
 }
 
 function render() {
   updateStatus();
   buildBoard();
+  buildDeck();
   buildHand();
   buildOfferPanel();
   buildResultPanel();
@@ -267,6 +366,7 @@ function restartGame() {
 export function startApp() {
   Game.startGame();
   render();
+  
   elements.secretButton.addEventListener('click', () => setPendingAction('secret'));
   elements.tradeoffButton.addEventListener('click', () => setPendingAction('tradeoff'));
   elements.giftButton.addEventListener('click', () => setPendingAction('gift'));

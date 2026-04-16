@@ -7,6 +7,15 @@
   --accent-strong: #e09f3e;
   --success: #4dab7f;
   --danger: #d96c6f;
+  
+  /* Geisha colors */
+  --geisha-1: #e74c3c;
+  --geisha-2: #3498db;
+  --geisha-3: #2ecc71;
+  --geisha-4: #9b59b6;
+  --geisha-5: #e67e22;
+  --geisha-6: #f1c40f;
+  --geisha-7: #e91e63;
 }
 
 * {
@@ -21,7 +30,7 @@ body {
 }
 
 .app-shell {
-  width: min(1080px, calc(100% - 32px));
+  width: min(1400px, calc(100% - 32px));
   margin: 24px auto 48px;
   padding: 24px;
   background: rgba(19, 33, 51, 0.96);
@@ -74,74 +83,228 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.board-panel,
-.hand-panel,
-.controls-panel,
-.offer-panel,
-.result-panel {
-  margin-bottom: 24px;
+/* Game area with board and deck */
+.game-area {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+  align-items: flex-start;
 }
 
-.geisha-board {
-  width: 100%;
-  border-collapse: collapse;
-  background: rgba(255, 255, 255, 0.05);
+.board-container {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 20px;
+  border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  overflow: hidden;
 }
 
-.geisha-board th,
-.geisha-board td {
-  padding: 14px 12px;
-  text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+.geisha-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  margin-bottom: 12px;
 }
 
-.geisha-board th {
+.geisha-row:last-child {
+  margin-bottom: 0;
+}
+
+.player-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.player-label {
+  font-size: 0.85rem;
+  color: #b8d4ff;
+  font-weight: 600;
+}
+
+.tokens-display {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.token {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: currentColor;
+}
+
+.geisha-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  min-width: 90px;
+  text-align: center;
+}
+
+.geisha-card.geisha-1 { background: rgba(231, 76, 60, 0.15); border-color: rgba(231, 76, 60, 0.4); }
+.geisha-card.geisha-2 { background: rgba(52, 152, 219, 0.15); border-color: rgba(52, 152, 219, 0.4); }
+.geisha-card.geisha-3 { background: rgba(46, 204, 113, 0.15); border-color: rgba(46, 204, 113, 0.4); }
+.geisha-card.geisha-4 { background: rgba(155, 89, 182, 0.15); border-color: rgba(155, 89, 182, 0.4); }
+.geisha-card.geisha-5 { background: rgba(230, 126, 34, 0.15); border-color: rgba(230, 126, 34, 0.4); }
+.geisha-card.geisha-6 { background: rgba(241, 196, 15, 0.15); border-color: rgba(241, 196, 15, 0.4); }
+.geisha-card.geisha-7 { background: rgba(233, 30, 99, 0.15); border-color: rgba(233, 30, 99, 0.4); }
+
+.geisha-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.geisha-value {
+  font-size: 0.75rem;
+  color: #b8d4ff;
+}
+
+/* Deck styling */
+.deck-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.deck-card {
+  width: 80px;
+  height: 120px;
+  background: linear-gradient(135deg, rgba(244, 211, 94, 0.2), rgba(224, 159, 62, 0.2));
+  border: 2px solid rgba(244, 211, 94, 0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #b8d4ff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.deck-count {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+/* Hand panel */
+.hand-panel {
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hand-list {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.card-button {
+  width: 70px;
+  height: 110px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  font-size: 0.7rem;
+  padding: 8px;
+  text-align: center;
+  color: var(--text);
   background: rgba(255, 255, 255, 0.08);
+  line-height: 1.1;
+  font-family: inherit;
 }
 
-.geisha-board tr:last-child td {
-  border-bottom: none;
+.card-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(244, 211, 94, 0.2);
+  filter: brightness(1.1);
 }
 
-.geisha-row.player-one td {
-  background: rgba(77, 171, 127, 0.08);
+.card-button.selected {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(244, 211, 94, 0.4);
+  border-color: rgba(244, 211, 94, 0.8);
+  background: rgba(244, 211, 94, 0.2);
 }
 
-.geisha-row.player-two td {
-  background: rgba(217, 108, 111, 0.08);
+.card-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.content-row {
-  display: grid;
-  grid-template-columns: 1.8fr 1fr;
-  gap: 24px;
+.card-button.geisha-1 { background: rgba(231, 76, 60, 0.2); border-color: rgba(231, 76, 60, 0.5); }
+.card-button.geisha-2 { background: rgba(52, 152, 219, 0.2); border-color: rgba(52, 152, 219, 0.5); }
+.card-button.geisha-3 { background: rgba(46, 204, 113, 0.2); border-color: rgba(46, 204, 113, 0.5); }
+.card-button.geisha-4 { background: rgba(155, 89, 182, 0.2); border-color: rgba(155, 89, 182, 0.5); }
+.card-button.geisha-5 { background: rgba(230, 126, 34, 0.2); border-color: rgba(230, 126, 34, 0.5); }
+.card-button.geisha-6 { background: rgba(241, 196, 15, 0.2); border-color: rgba(241, 196, 15, 0.5); }
+.card-button.geisha-7 { background: rgba(233, 30, 99, 0.2); border-color: rgba(233, 30, 99, 0.5); }
+
+.card-number {
+  font-weight: bold;
+  font-size: 0.85rem;
 }
 
-.hand-panel,
+.card-name {
+  font-size: 0.65rem;
+  opacity: 0.9;
+}
+
+/* Controls panel */
 .controls-panel {
   background: rgba(255, 255, 255, 0.04);
   padding: 18px;
   border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 24px;
 }
 
-.hand-panel h2,
 .controls-panel h2 {
   margin-top: 0;
 }
 
-.hand-list {
+.action-buttons {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.confirm-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.card-button,
-.offer-button,
 .action-buttons button,
 .confirm-panel button {
-  width: 100%;
   border: none;
   border-radius: 14px;
   padding: 14px 16px;
@@ -149,30 +312,13 @@ body {
   background: var(--surface-strong);
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
+  font-weight: 500;
 }
 
-.card-button:hover,
-.offer-button:hover,
 .action-buttons button:hover,
 .confirm-panel button:hover {
   transform: translateY(-1px);
   background: rgba(244, 211, 94, 0.15);
-}
-
-.card-button.selected {
-  background: rgba(244, 211, 94, 0.25);
-  border: 1px solid rgba(244, 211, 94, 0.7);
-}
-
-.action-buttons {
-  display: grid;
-  gap: 12px;
-}
-
-.confirm-panel {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
 }
 
 .primary {
@@ -190,32 +336,55 @@ button:disabled {
   transform: none;
 }
 
-.offer-panel {
-  display: grid;
-  gap: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 18px;
-  border-radius: 18px;
-}
-
-.offer-title {
-  margin: 0;
-  font-weight: 600;
-}
-
+.offer-panel,
 .result-panel {
-  padding: 18px;
+  padding: 20px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 24px;
+}
+
+.offer-title {
+  margin: 0 0 16px 0;
+  font-weight: 600;
+}
+
+.offer-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.offer-button {
+  border: none;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.offer-button:hover {
+  transform: translateY(-1px);
+  background: rgba(244, 211, 94, 0.15);
 }
 
 .hidden {
   display: none;
 }
 
-@media (max-width: 900px) {
-  .content-row {
-    grid-template-columns: 1fr;
+.result-details {
+  line-height: 1.8;
+}
+
+@media (max-width: 1200px) {
+  .game-area {
+    flex-direction: column;
+  }
+
+  .deck-container {
+    flex-direction: row;
+    justify-content: center;
   }
 }

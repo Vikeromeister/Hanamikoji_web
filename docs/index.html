@@ -21,15 +21,16 @@
 
     <section id="message" class="message-panel">Kattints egy akcióra a kezdéshez.</section>
 
-    <section id="board" class="board-panel"></section>
+    <section class="game-area">
+      <div id="board-container" class="board-container"></div>
+      <div id="deck-container" class="deck-container"></div>
+    </section>
 
-    <section class="content-row">
-      <section class="hand-panel">
-        <h2>Jelenlegi kéz</h2>
-        <div id="hand-list" class="hand-list"></div>
-      </section>
+    <section id="hand-panel" class="hand-panel">
+      <div id="hand-list" class="hand-list"></div>
+    </section>
 
-      <section class="controls-panel">
+    <section class="controls-panel">
         <h2>Akciók</h2>
         <div class="action-buttons">
           <button id="secret-button">1. Titok</button>
@@ -42,7 +43,6 @@
           <button id="restart-button" class="secondary">Új játék</button>
         </div>
       </section>
-    </section>
 
     <section id="offer-panel" class="offer-panel hidden"></section>
 
