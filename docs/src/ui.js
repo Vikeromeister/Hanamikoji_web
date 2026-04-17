@@ -454,14 +454,12 @@ function restartGame() {
   Game.startGame();
   pendingAction = null;
   offerChoices = null;
-  showTransition(Game.state.currentPlayer);
+  render();
 }
 
 export function startApp() {
   Game.startGame();
-  pendingAction = null;
-  offerChoices = null;
-  showTransition(Game.state.currentPlayer);
+  render();
   
   elements.secretButton.addEventListener('click', () => setPendingAction('secret'));
   elements.tradeoffButton.addEventListener('click', () => setPendingAction('tradeoff'));
