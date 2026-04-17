@@ -45,17 +45,48 @@ const elements = {
   confirmButton: document.getElementById('confirm-button'),
   restartButton: document.getElementById('restart-button'),
   offerPanel: document.getElementById('offer-panel'),
-  resultPanel: document.getElementById('result-panel')
+  resultPanel: document.getElementById('result-panel'),
+  transitionScreen: document.getElementById('transition-screen'),
+  transitionTitle: document.getElementById('transition-title'),
+  transitionText: document.getElementById('transition-text'),
+  transitionButton: document.getElementById('transition-button')
 };
 
 let pendingAction = null;
 let offerChoices = null;
+let transition = null;
 
 function updateStatus() {
   elements.currentPlayer.textContent = Game.state.currentPlayer;
   elements.turnNumber.textContent = Game.state.turnsTaken + 1;
   elements.deckCount.textContent = Game.state.deck.length;
   elements.message.textContent = Game.state.message;
+}
+
+function other(player) {
+  return player === 1 ? 2 : 1;
+}
+
+function showTransition(player) {
+  transition = {
+    player,
+    title: `Player ${player}'s turn`,
+    text: 'After acknowledging, the upcoming player\'s hand will be visible. Please do not look at the screen.'
+  };
+  render();
+}
+
+function hideTransition() {
+  transition = null;
+  render();
+}
+
+function acknowledgeTransition() {
+  if (!transition) {
+    return;
+  }
+
+  hideTransition();
 }
 
 function createGiftStack(count, rowId, playerLabel) {
@@ -180,7 +211,7 @@ function buildOfferPanel() {
   elements.offerPanel.innerHTML = '';
   elements.offerPanel.classList.add('hidden');
   
-  if (!offerChoices) {
+  if (!offerChoices || transition) {
     return;
   }
   
@@ -228,11 +259,12 @@ function buildResultPanel() {
 
 function updateActionButtons() {
   const player = Game.state.currentPlayer;
-  elements.secretButton.disabled = !Game.canUseAction(player, 'secret') || Game.state.gameOver || pendingAction;
-  elements.tradeoffButton.disabled = !Game.canUseAction(player, 'tradeoff') || Game.state.gameOver || pendingAction;
-  elements.giftButton.disabled = !Game.canUseAction(player, 'gift') || Game.state.gameOver || pendingAction;
-  elements.competitionButton.disabled = !Game.canUseAction(player, 'competition') || Game.state.gameOver || pendingAction;
-  elements.confirmButton.disabled = !pendingAction || pendingAction.mode !== 'select';
+  const transitionActive = !!transition;
+  elements.secretButton.disabled = !Game.canUseAction(player, 'secret') || Game.state.gameOver || pendingAction || transitionActive;
+  elements.tradeoffButton.disabled = !Game.canUseAction(player, 'tradeoff') || Game.state.gameOver || pendingAction || transitionActive;
+  elements.giftButton.disabled = !Game.canUseAction(player, 'gift') || Game.state.gameOver || pendingAction || transitionActive;
+  elements.competitionButton.disabled = !Game.canUseAction(player, 'competition') || Game.state.gameOver || pendingAction || transitionActive;
+  elements.confirmButton.disabled = !pendingAction || pendingAction.mode !== 'select' || transitionActive;
 }
 
 function setPendingAction(actionType) {
@@ -310,10 +342,16 @@ function confirmSelection() {
     case 'secret':
       Game.performSecret(player, selected[0]);
       pendingAction = null;
+      if (!Game.state.gameOver) {
+        showTransition(Game.state.currentPlayer);
+      }
       break;
     case 'tradeoff':
       Game.performTradeoff(player, selected);
       pendingAction = null;
+      if (!Game.state.gameOver) {
+        showTransition(Game.state.currentPlayer);
+      }
       break;
     case 'gift':
       prepareGiftResponse(player, selected);
@@ -332,17 +370,22 @@ function prepareGiftResponse(player, selectedIndex) {
   
   pendingAction = null;
   offerChoices = {
-    title: 'Az ellenfél válasszon egy kártyát az ajánlatból.',
+    title: 'The opponent should choose one of the offered cards.',
     options: giftCards.map((card, index) => ({ label: `${index + 1}. ${Game.cardName(card)}` })),
     handler: (chosenOfferIndex) => {
       Game.performGift(player, selectedIndex, chosenOfferIndex);
       offerChoices = null;
       pendingAction = null;
-      render();
+      if (!Game.state.gameOver) {
+        showTransition(Game.state.currentPlayer);
+      } else {
+        render();
+      }
     }
   };
   
-  Game.state.message = 'Az ellenfél választ az ajánlott kártyák közül.';
+  Game.state.message = 'The opponent is choosing from the offered cards.';
+  showTransition(other(player));
 }
 
 function prepareCompetitionResponse(player, selectedIndex) {
@@ -353,20 +396,25 @@ function prepareCompetitionResponse(player, selectedIndex) {
   
   pendingAction = null;
   offerChoices = {
-    title: 'Az ellenfél válassza ki, melyik párt szeretné megszerezni.',
+    title: 'The opponent should choose which pair they want to take.',
     options: [
-      { label: `1. pár: ${Game.cardName(firstPair[0])}, ${Game.cardName(firstPair[1])}` },
-      { label: `2. pár: ${Game.cardName(secondPair[0])}, ${Game.cardName(secondPair[1])}` }
+      { label: `1. pair: ${Game.cardName(firstPair[0])}, ${Game.cardName(firstPair[1])}` },
+      { label: `2. pair: ${Game.cardName(secondPair[0])}, ${Game.cardName(secondPair[1])}` }
     ],
     handler: (chosenPairIndex) => {
       Game.performCompetition(player, selectedIndex, chosenPairIndex + 1);
       offerChoices = null;
       pendingAction = null;
-      render();
+      if (!Game.state.gameOver) {
+        showTransition(Game.state.currentPlayer);
+      } else {
+        render();
+      }
     }
   };
   
-  Game.state.message = 'Az ellenfél választ a párok közül.';
+  Game.state.message = 'The opponent is choosing between the pairs.';
+  showTransition(other(player));
 }
 
 function render() {
@@ -377,18 +425,28 @@ function render() {
   buildOfferPanel();
   buildResultPanel();
   updateActionButtons();
+
+  if (transition) {
+    elements.transitionTitle.textContent = transition.title;
+    elements.transitionText.textContent = transition.text;
+    elements.transitionScreen.classList.remove('hidden');
+  } else {
+    elements.transitionScreen.classList.add('hidden');
+  }
 }
 
 function restartGame() {
   Game.startGame();
   pendingAction = null;
   offerChoices = null;
-  render();
+  showTransition(Game.state.currentPlayer);
 }
 
 export function startApp() {
   Game.startGame();
-  render();
+  pendingAction = null;
+  offerChoices = null;
+  showTransition(Game.state.currentPlayer);
   
   elements.secretButton.addEventListener('click', () => setPendingAction('secret'));
   elements.tradeoffButton.addEventListener('click', () => setPendingAction('tradeoff'));
@@ -396,4 +454,5 @@ export function startApp() {
   elements.competitionButton.addEventListener('click', () => setPendingAction('competition'));
   elements.confirmButton.addEventListener('click', () => confirmSelection());
   elements.restartButton.addEventListener('click', () => restartGame());
+  elements.transitionButton.addEventListener('click', () => acknowledgeTransition());
 }
