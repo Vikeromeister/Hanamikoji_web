@@ -8,18 +8,12 @@
 </head>
 <body>
   <div class="app-shell">
-    <header class="app-header">
-      <h1>Hanamikoji</h1>
-      <p>Három-négy kártyás akciók két játékos számára ugyanazon a számítógépen.</p>
-    </header>
-
     <section class="status-panel">
-      <div class="status-item"><strong>Játékos:</strong> <span id="current-player">1</span></div>
-      <div class="status-item"><strong>Kör:</strong> <span id="turn-number">1</span> / 8</div>
-      <div class="status-item"><strong>Pakli:</strong> <span id="deck-count">9</span> lap maradt</div>
+      <div class="status-item"><strong>Player:</strong> <span id="current-player">1</span></div>
+      <div class="status-item"><strong>Turn:</strong> <span id="turn-number">1</span> / 8</div>
     </section>
 
-    <section id="message" class="message-panel">Kattints egy akcióra a kezdéshez.</section>
+    <section id="message" class="message-panel">Click an action to start.</section>
 
     <section class="game-area">
       <div id="board-container" class="board-container"></div>
@@ -31,16 +25,16 @@
     </section>
 
     <section class="controls-panel">
-        <h2>Akciók</h2>
+        <h2>Actions</h2>
         <div class="action-buttons">
-          <button id="secret-button">1. Titok</button>
-          <button id="tradeoff-button">2. Kompromisszum</button>
-          <button id="gift-button">3. Ajándék</button>
-          <button id="competition-button">4. Versenyzés</button>
+          <button id="secret-button">1. Secret</button>
+          <button id="tradeoff-button">2. Tradeoff</button>
+          <button id="gift-button">3. Gift</button>
+          <button id="competition-button">4. Competition</button>
         </div>
         <div class="confirm-panel">
-          <button id="confirm-button" class="primary">Megerősítés</button>
-          <button id="restart-button" class="secondary">Új játék</button>
+          <button id="confirm-button" class="primary">Confirm</button>
+          <button id="restart-button" class="secondary">New Game</button>
         </div>
       </section>
 

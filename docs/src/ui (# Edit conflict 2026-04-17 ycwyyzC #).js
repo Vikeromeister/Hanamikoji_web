@@ -184,7 +184,7 @@ function buildHand() {
     
     const valueDiv = document.createElement('div');
     valueDiv.className = 'card-value';
-    valueDiv.textContent = `${Game.cardValue(card)} pont`;
+    valueDiv.textContent = Game.cardValue(card);
     
     button.appendChild(iconDiv);
     button.appendChild(valueDiv);
