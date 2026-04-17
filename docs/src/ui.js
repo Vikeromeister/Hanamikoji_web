@@ -31,12 +31,11 @@ const CARD_ICONS = {
 };
 
 const elements = {
-  currentPlayer: document.getElementById('current-player'),
-  turnNumber: document.getElementById('turn-number'),
   message: document.getElementById('message'),
   boardContainer: document.getElementById('board-container'),
   deckContainer: document.getElementById('deck-container'),
   handList: document.getElementById('hand-list'),
+  opponentHandList: document.getElementById('opponent-hand-list'),
   secretButton: document.getElementById('secret-button'),
   tradeoffButton: document.getElementById('tradeoff-button'),
   giftButton: document.getElementById('gift-button'),
@@ -56,8 +55,6 @@ let offerChoices = null;
 let transition = null;
 
 function updateStatus() {
-  elements.currentPlayer.textContent = Game.state.currentPlayer;
-  elements.turnNumber.textContent = Game.state.turnsTaken + 1;
   elements.message.textContent = Game.state.message;
 }
 
@@ -99,7 +96,7 @@ function createGiftStack(count, rowId, playerLabel) {
     return stack;
   }
 
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < Math.min(count, 3); i++) {  // Show up to 3 cards
     const giftCard = document.createElement('div');
     giftCard.className = `gift-card ${GEISHA_COLORS[rowId]}`;
     const iconDiv = document.createElement('div');
@@ -107,10 +104,17 @@ function createGiftStack(count, rowId, playerLabel) {
     iconDiv.textContent = CARD_ICONS[rowId];
     const valueDiv = document.createElement('div');
     valueDiv.className = 'gift-value';
-    valueDiv.textContent = `${Game.cardValue(rowId)} pont`;
+    valueDiv.textContent = Game.cardValue(rowId);
     giftCard.appendChild(iconDiv);
     giftCard.appendChild(valueDiv);
     stack.appendChild(giftCard);
+  }
+
+  if (count > 3) {
+    const countDiv = document.createElement('div');
+    countDiv.className = 'gift-count';
+    countDiv.textContent = `+${count - 3}`;
+    stack.appendChild(countDiv);
   }
 
   return stack;
@@ -119,6 +123,24 @@ function createGiftStack(count, rowId, playerLabel) {
 function buildBoard() {
   const rows = Game.getGeishaRows();
   elements.boardContainer.innerHTML = '';
+
+  const boardWrapper = document.createElement('div');
+  boardWrapper.className = 'board-wrapper';
+
+  // Secret card area
+  const secretDiv = document.createElement('div');
+  secretDiv.className = 'secret-area';
+  const secretCard = Game.state.secretCard[Game.state.currentPlayer];
+  if (secretCard !== null) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = `secret-card card-back`;
+    const revealDiv = document.createElement('div');
+    revealDiv.className = 'secret-reveal';
+    revealDiv.textContent = `${CARD_ICONS[secretCard]} ${Game.cardValue(secretCard)}`;
+    cardDiv.appendChild(revealDiv);
+    secretDiv.appendChild(cardDiv);
+  }
+  boardWrapper.appendChild(secretDiv);
 
   const boardGrid = document.createElement('div');
   boardGrid.className = 'geisha-grid';
@@ -151,21 +173,20 @@ function buildBoard() {
     boardGrid.appendChild(column);
   });
 
-  elements.boardContainer.appendChild(boardGrid);
+  boardWrapper.appendChild(boardGrid);
+  elements.boardContainer.appendChild(boardWrapper);
 }
 
-function buildDeck() {
-  elements.deckContainer.innerHTML = '';
+function buildOpponentHand() {
+  const opponent = other(Game.state.currentPlayer);
+  const opponentHand = Game.getHand(opponent);
+  elements.opponentHandList.innerHTML = '';
   
-  const deckDiv = document.createElement('div');
-  deckDiv.className = 'deck-container';
-  
-  const cardDiv = document.createElement('div');
-  cardDiv.className = 'deck-card';
-  cardDiv.textContent = Game.state.deck.length;
-  
-  deckDiv.appendChild(cardDiv);
-  elements.deckContainer.appendChild(deckDiv);
+  opponentHand.forEach(() => {
+    const backDiv = document.createElement('div');
+    backDiv.className = 'card-back';
+    elements.opponentHandList.appendChild(backDiv);
+  });
 }
 
 function buildHand() {
@@ -412,6 +433,7 @@ function prepareCompetitionResponse(player, selectedIndex) {
 
 function render() {
   updateStatus();
+  buildOpponentHand();
   buildBoard();
   buildDeck();
   buildHand();
