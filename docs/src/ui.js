@@ -20,6 +20,16 @@ const COLOR_RGB = {
   'geisha-7': 'rgb(233, 30, 99)'
 };
 
+const CARD_ICONS = {
+  1: '🪈',
+  2: '🪭',
+  3: '📜',
+  4: '☂️',
+  5: '🎸',
+  6: '🫖',
+  7: '💐'
+};
+
 const elements = {
   currentPlayer: document.getElementById('current-player'),
   turnNumber: document.getElementById('turn-number'),
@@ -48,59 +58,71 @@ function updateStatus() {
   elements.message.textContent = Game.state.message;
 }
 
+function createGiftStack(count, rowId, playerLabel) {
+  const stack = document.createElement('div');
+  stack.className = `gift-stack gift-stack-${playerLabel}`;
+
+  if (count === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'gift-stack-empty';
+    empty.textContent = '\u00A0';
+    stack.appendChild(empty);
+    return stack;
+  }
+
+  for (let i = 0; i < count; i++) {
+    const giftCard = document.createElement('div');
+    giftCard.className = `gift-card ${GEISHA_COLORS[rowId]}`;
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'gift-icon';
+    iconDiv.textContent = CARD_ICONS[rowId];
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'gift-value';
+    valueDiv.textContent = `${Game.cardValue(rowId)} pont`;
+    giftCard.appendChild(iconDiv);
+    giftCard.appendChild(valueDiv);
+    stack.appendChild(giftCard);
+  }
+
+  return stack;
+}
+
 function buildBoard() {
   const rows = Game.getGeishaRows();
   elements.boardContainer.innerHTML = '';
 
+  const boardGrid = document.createElement('div');
+  boardGrid.className = 'geisha-grid';
+
   rows.forEach((row) => {
-    const rowDiv = document.createElement('div');
-    rowDiv.className = 'geisha-row';
+    const column = document.createElement('div');
+    column.className = 'geisha-column';
 
-    // Player 1 side with tokens
-    const p1Side = document.createElement('div');
-    p1Side.className = 'player-side';
-    p1Side.innerHTML = '<div class="player-label">1. játékos</div>';
-    const p1Tokens = document.createElement('div');
-    p1Tokens.className = 'tokens-display';
-    for (let i = 0; i < row.player1; i++) {
-      const token = document.createElement('div');
-      token.className = 'token';
-      token.style.color = COLOR_RGB[GEISHA_COLORS[row.id]];
-      p1Tokens.appendChild(token);
-    }
-    p1Side.appendChild(p1Tokens);
-
-    // Geisha card in center
+    const p2Gifts = createGiftStack(row.player2, row.id, 'player2');
     const geishaDiv = document.createElement('div');
     geishaDiv.className = `geisha-card ${GEISHA_COLORS[row.id]}`;
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'geisha-icon';
+    iconDiv.textContent = CARD_ICONS[row.id];
     const nameDiv = document.createElement('div');
     nameDiv.className = 'geisha-name';
     nameDiv.textContent = row.name;
     const valueDiv = document.createElement('div');
     valueDiv.className = 'geisha-value';
     valueDiv.textContent = `${row.value} pont`;
+    geishaDiv.appendChild(iconDiv);
     geishaDiv.appendChild(nameDiv);
     geishaDiv.appendChild(valueDiv);
 
-    // Player 2 side with tokens
-    const p2Side = document.createElement('div');
-    p2Side.className = 'player-side';
-    p2Side.innerHTML = '<div class="player-label">2. játékos</div>';
-    const p2Tokens = document.createElement('div');
-    p2Tokens.className = 'tokens-display';
-    for (let i = 0; i < row.player2; i++) {
-      const token = document.createElement('div');
-      token.className = 'token';
-      token.style.color = COLOR_RGB[GEISHA_COLORS[row.id]];
-      p2Tokens.appendChild(token);
-    }
-    p2Side.appendChild(p2Tokens);
+    const p1Gifts = createGiftStack(row.player1, row.id, 'player1');
 
-    rowDiv.appendChild(p1Side);
-    rowDiv.appendChild(geishaDiv);
-    rowDiv.appendChild(p2Side);
-    elements.boardContainer.appendChild(rowDiv);
+    column.appendChild(p2Gifts);
+    column.appendChild(geishaDiv);
+    column.appendChild(p1Gifts);
+    boardGrid.appendChild(column);
   });
+
+  elements.boardContainer.appendChild(boardGrid);
 }
 
 function buildDeck() {
@@ -130,17 +152,18 @@ function buildHand() {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `card-button ${GEISHA_COLORS[card]}`;
+    button.title = Game.cardName(card);
     
-    const numberDiv = document.createElement('div');
-    numberDiv.className = 'card-number';
-    numberDiv.textContent = index + 1;
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'card-icon';
+    iconDiv.textContent = CARD_ICONS[card];
     
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'card-name';
-    nameDiv.textContent = Game.cardName(card);
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'card-value';
+    valueDiv.textContent = `${Game.cardValue(card)} pont`;
     
-    button.appendChild(numberDiv);
-    button.appendChild(nameDiv);
+    button.appendChild(iconDiv);
+    button.appendChild(valueDiv);
     
     button.disabled = !pendingAction || pendingAction.mode !== 'select';
     
