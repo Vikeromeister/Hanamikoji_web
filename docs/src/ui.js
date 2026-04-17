@@ -177,6 +177,16 @@ function buildBoard() {
   elements.boardContainer.appendChild(boardWrapper);
 }
 
+function buildDeck() {
+  elements.deckContainer.innerHTML = '';
+  
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'deck-card';
+  cardDiv.textContent = Game.state.deck.length;
+  
+  elements.deckContainer.appendChild(cardDiv);
+}
+
 function buildOpponentHand() {
   const opponent = other(Game.state.currentPlayer);
   const opponentHand = Game.getHand(opponent);
@@ -205,7 +215,7 @@ function buildHand() {
     
     const valueDiv = document.createElement('div');
     valueDiv.className = 'card-value';
-    valueDiv.textContent = `${Game.cardValue(card)} pont`;
+    valueDiv.textContent = Game.cardValue(card);
     
     button.appendChild(iconDiv);
     button.appendChild(valueDiv);
