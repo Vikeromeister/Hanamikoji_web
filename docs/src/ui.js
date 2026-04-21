@@ -72,6 +72,7 @@ function isComputer(player) {
 
 function showTransition(player) {
   if (gameMode === 'single') {
+    render();
     return;
   }
 
@@ -123,6 +124,67 @@ function resolveAIChoice() {
   handler(choiceIndex);
 }
 
+function prepareAIGiftResponse(player, selectedIndex) {
+  const hand = Game.getHand(player);
+  const giftCards = selectedIndex.map((index) => hand[index]);
+
+  pendingAction = null;
+  offerChoices = {
+    title: 'A számítógép ajándékot adott. Válassz egy kártyát.',
+    options: giftCards.map((card, index) => ({ label: `${index + 1}. ${Game.cardName(card)}` })),
+    handler: (chosenOfferIndex) => {
+      Game.performGift(player, selectedIndex, chosenOfferIndex);
+      offerChoices = null;
+      pendingAction = null;
+      if (!Game.state.gameOver) {
+        if (gameMode === 'single' && Game.state.currentPlayer === 2) {
+          executeAITurn();
+        } else {
+          showTransition(Game.state.currentPlayer);
+        }
+      } else {
+        render();
+      }
+    }
+  };
+
+  Game.state.message = 'A számítógép felajánlott három kártyát. Válassz egyet.';
+  render();
+}
+
+function prepareAICompetitionResponse(player, selectedIndex) {
+  const hand = Game.getHand(player);
+  const competitionCards = selectedIndex.map((index) => hand[index]);
+  const firstPair = competitionCards.slice(0, 2);
+  const secondPair = competitionCards.slice(2, 4);
+
+  pendingAction = null;
+  offerChoices = {
+    title: 'A számítógép két párt kínál. Válaszd ki, melyiket akarod.',
+    options: [
+      { label: `1. pár: ${Game.cardName(firstPair[0])}, ${Game.cardName(firstPair[1])}` },
+      { label: `2. pár: ${Game.cardName(secondPair[0])}, ${Game.cardName(secondPair[1])}` }
+    ],
+    handler: (chosenPairIndex) => {
+      Game.performCompetition(player, selectedIndex, chosenPairIndex + 1);
+      offerChoices = null;
+      pendingAction = null;
+      if (!Game.state.gameOver) {
+        if (gameMode === 'single' && Game.state.currentPlayer === 2) {
+          executeAITurn();
+        } else {
+          showTransition(Game.state.currentPlayer);
+        }
+      } else {
+        render();
+      }
+    }
+  };
+
+  Game.state.message = 'A számítógép választott négy kártyát. Válaszd ki, melyik pár legyen a tiéd.';
+  render();
+}
+
 function executeAITurn() {
   if (Game.state.gameOver || !isComputer(Game.state.currentPlayer)) {
     return;
@@ -160,26 +222,18 @@ function executeAITurn() {
   switch (action) {
     case 'secret':
       Game.performSecret(player, selected[0]);
+      render();
       break;
     case 'tradeoff':
       Game.performTradeoff(player, selected);
+      render();
       break;
     case 'gift':
-      Game.performGift(player, selected, Math.floor(Math.random() * 3));
+      prepareAIGiftResponse(player, selected);
       break;
     case 'competition':
-      Game.performCompetition(player, selected, Math.random() < 0.5 ? 1 : 2);
+      prepareAICompetitionResponse(player, selected);
       break;
-  }
-
-  if (!Game.state.gameOver) {
-    if (gameMode === 'single') {
-      render();
-    } else {
-      showTransition(Game.state.currentPlayer);
-    }
-  } else {
-    render();
   }
 }
 
@@ -429,11 +483,13 @@ function buildResultPanel() {
 function updateActionButtons() {
   const player = Game.state.currentPlayer;
   const transitionActive = !!transition;
-  elements.secretButton.disabled = !Game.canUseAction(player, 'secret') || Game.state.gameOver || pendingAction || transitionActive;
-  elements.tradeoffButton.disabled = !Game.canUseAction(player, 'tradeoff') || Game.state.gameOver || pendingAction || transitionActive;
-  elements.giftButton.disabled = !Game.canUseAction(player, 'gift') || Game.state.gameOver || pendingAction || transitionActive;
-  elements.competitionButton.disabled = !Game.canUseAction(player, 'competition') || Game.state.gameOver || pendingAction || transitionActive;
-  elements.confirmButton.disabled = !pendingAction || pendingAction.mode !== 'select' || transitionActive;
+  const responsePending = !!offerChoices;
+  const isAITurn = gameMode === 'single' && Game.state.currentPlayer === 2 && !responsePending;
+  elements.secretButton.disabled = !Game.canUseAction(player, 'secret') || Game.state.gameOver || pendingAction || transitionActive || responsePending || isAITurn;
+  elements.tradeoffButton.disabled = !Game.canUseAction(player, 'tradeoff') || Game.state.gameOver || pendingAction || transitionActive || responsePending || isAITurn;
+  elements.giftButton.disabled = !Game.canUseAction(player, 'gift') || Game.state.gameOver || pendingAction || transitionActive || responsePending || isAITurn;
+  elements.competitionButton.disabled = !Game.canUseAction(player, 'competition') || Game.state.gameOver || pendingAction || transitionActive || responsePending || isAITurn;
+  elements.confirmButton.disabled = !pendingAction || pendingAction.mode !== 'select' || transitionActive || responsePending || isAITurn;
 }
 
 function setPendingAction(actionType) {
