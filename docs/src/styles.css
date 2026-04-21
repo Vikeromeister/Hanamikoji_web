@@ -51,13 +51,13 @@ body {
 }
 
 .card-back {
-  width: 58px;
-  height: 84px;
+  width: 100px;
+  height: 120px;
   background-image: url('../assets/background_card.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border-radius: 8px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,10 +273,10 @@ body {
 }
 
 .gift-card {
-  width: 58px;
-  height: 84px;
+  width: 100px;
+  height: 120px;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   display: block;
   padding: 0;
   background-size: cover;
@@ -289,7 +289,7 @@ body {
 }
 
 .gift-card + .gift-card {
-  margin-top: -32px;
+  margin-top: -46px;
 }
 
 .gift-count {
@@ -324,40 +324,32 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px 14px;
-  border-radius: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  min-width: 120px;
-  max-width: 160px;
+  gap: 0;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  min-width: 100px;
+  max-width: 100px;
   text-align: center;
 }
 .geisha-image {
   width: 100px;
   height: 120px;
-  border-radius: 16px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  border-radius: 0;
+  box-shadow: none;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.geisha-card.geisha-1 { background: rgba(231, 76, 60, 0.15); border-color: rgba(231, 76, 60, 0.4); }
-.geisha-card.geisha-2 { background: rgba(52, 152, 219, 0.15); border-color: rgba(52, 152, 219, 0.4); }
-.geisha-card.geisha-3 { background: rgba(46, 204, 113, 0.15); border-color: rgba(46, 204, 113, 0.4); }
-.geisha-card.geisha-4 { background: rgba(155, 89, 182, 0.15); border-color: rgba(155, 89, 182, 0.4); }
-.geisha-card.geisha-5 { background: rgba(230, 126, 34, 0.15); border-color: rgba(230, 126, 34, 0.4); }
-.geisha-card.geisha-6 { background: rgba(241, 196, 15, 0.15); border-color: rgba(241, 196, 15, 0.4); }
-.geisha-card.geisha-7 { background: rgba(233, 30, 99, 0.15); border-color: rgba(233, 30, 99, 0.4); }
+
 
 .geisha-name {
-  font-weight: 600;
-  font-size: 0.9rem;
+  display: none;
 }
 
 .geisha-value {
-  font-size: 0.75rem;
-  color: #b8d4ff;
+  display: none;
 }
 
 /* Deck styling */
@@ -369,14 +361,14 @@ body {
 }
 
 .deck-card {
-  width: 80px;
+  width: 100px;
   height: 120px;
   background-image: url('../assets/background_card.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border: 2px solid rgba(244, 211, 94, 0.4);
-  border-radius: 10px;
+  border: none;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -404,11 +396,11 @@ body {
 }
 
 .card-button {
-  width: 58px;
-  height: 84px;
+  width: 100px;
+  height: 120px;
   padding: 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   display: block;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
