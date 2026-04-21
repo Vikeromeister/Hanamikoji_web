@@ -53,9 +53,10 @@ body {
 .card-back {
   width: 58px;
   height: 84px;
-  background-image: url('../Cards.png');
-  background-size: 464px 120px;
-  background-position: 0 0;
+  background-image: url('../assets/background_card.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -278,24 +279,14 @@ body {
   border-radius: 8px;
   display: block;
   padding: 0;
-  background-size: 464px 168px;
-  background-position: 0 -84px;
-  background-image: url('../Cards.png');
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   font-family: inherit;
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
 }
-
-/* Gift card type backgrounds (58px per card) */
-.gift-card[data-card="1"] { background-position: 0 0; }
-.gift-card[data-card="2"] { background-position: -58px 0; }
-.gift-card[data-card="3"] { background-position: -116px 0; }
-.gift-card[data-card="4"] { background-position: -174px 0; }
-.gift-card[data-card="5"] { background-position: -232px 0; }
-.gift-card[data-card="6"] { background-position: -290px 0; }
-.gift-card[data-card="7"] { background-position: -348px 0; }
 
 .gift-card + .gift-card {
   margin-top: -32px;
@@ -333,13 +324,22 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 18px 16px;
-  border-radius: 14px;
+  gap: 10px;
+  padding: 10px 12px 14px;
+  border-radius: 18px;
   border: 2px solid rgba(255, 255, 255, 0.15);
   min-width: 120px;
   max-width: 160px;
   text-align: center;
+}
+.geisha-image {
+  width: 100px;
+  height: 120px;
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .geisha-card.geisha-1 { background: rgba(231, 76, 60, 0.15); border-color: rgba(231, 76, 60, 0.4); }
@@ -371,7 +371,10 @@ body {
 .deck-card {
   width: 80px;
   height: 120px;
-  background: linear-gradient(135deg, rgba(244, 211, 94, 0.2), rgba(224, 159, 62, 0.2));
+  background-image: url('../assets/background_card.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 2px solid rgba(244, 211, 94, 0.4);
   border-radius: 10px;
   display: flex;
@@ -409,9 +412,8 @@ body {
   display: block;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  background-size: 464px 168px;
-  background-position: 0 -84px;
-  background-image: url('../Cards.png');
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   font-family: inherit;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -435,13 +437,6 @@ body {
 }
 
 /* Card type backgrounds - position in spritesheet (58px per card) */
-.card-button[data-card="1"] { background-position: 0 0; }
-.card-button[data-card="2"] { background-position: -58px 0; }
-.card-button[data-card="3"] { background-position: -116px 0; }
-.card-button[data-card="4"] { background-position: -174px 0; }
-.card-button[data-card="5"] { background-position: -232px 0; }
-.card-button[data-card="6"] { background-position: -290px 0; }
-.card-button[data-card="7"] { background-position: -348px 0; }
 
 .card-icon {
   display: none;

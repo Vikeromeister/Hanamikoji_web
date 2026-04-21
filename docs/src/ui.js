@@ -30,6 +30,34 @@ const CARD_ICONS = {
   7: '💐'
 };
 
+const ASSET_BASE = '../assets/';
+const CARD_IMAGE_FILES = {
+  1: 'gift_burger_2pts.png',
+  2: 'gift_cardigan_3pts.png',
+  3: 'gift_chips_2pts.png',
+  4: 'gift_phone_5pts.png',
+  5: 'gift_spinner_2pts.png',
+  6: 'gift_sunglasses_3pts.png',
+  7: 'gift_ticket_4pts.png'
+};
+const GEISHA_IMAGE_FILES = {
+  1: 'woman_burger_2pts.png',
+  2: 'woman_cardigan_3pts.png',
+  3: 'woman_chips_2pts.png',
+  4: 'woman_phone_5pts.png',
+  5: 'woman_spinner_2pts.png',
+  6: 'woman_sunglasses_3pts.png',
+  7: 'woman_ticket_4pts.png'
+};
+
+function getCardAssetPath(cardId) {
+  return `${ASSET_BASE}${CARD_IMAGE_FILES[cardId] || 'background_card.png'}`;
+}
+
+function getGeishaAssetPath(cardId) {
+  return `${ASSET_BASE}${GEISHA_IMAGE_FILES[cardId] || 'background_card.png'}`;
+}
+
 const elements = {
   message: document.getElementById('message'),
   boardContainer: document.getElementById('board-container'),
@@ -299,6 +327,10 @@ function createGiftStack(count, rowId, playerLabel) {
     const giftCard = document.createElement('div');
     giftCard.className = 'gift-card';
     giftCard.setAttribute('data-card', rowId);
+    giftCard.style.backgroundImage = `url('${getCardAssetPath(rowId)}')`;
+    giftCard.style.backgroundSize = 'cover';
+    giftCard.style.backgroundPosition = 'center';
+    giftCard.style.backgroundRepeat = 'no-repeat';
     stack.appendChild(giftCard);
   }
 
@@ -344,12 +376,25 @@ function buildBoard() {
     const p2Gifts = createGiftStack(row.player2, row.id, 'player2');
     const geishaDiv = document.createElement('div');
     geishaDiv.className = 'geisha-card';
-    geishaDiv.style.backgroundImage = "url('../Cards.png')";
-    geishaDiv.style.backgroundSize = '464px 168px';
-    geishaDiv.style.backgroundPosition = `${-58 * (row.id - 1)}px 0`;
-    geishaDiv.style.backgroundRepeat = 'no-repeat';
-    geishaDiv.style.width = '80px';
-    geishaDiv.style.height = '100px';
+
+    const geishaImage = document.createElement('div');
+    geishaImage.className = 'geisha-image';
+    geishaImage.style.backgroundImage = `url('${getGeishaAssetPath(row.id)}')`;
+    geishaImage.style.backgroundSize = 'cover';
+    geishaImage.style.backgroundPosition = 'center';
+    geishaImage.style.backgroundRepeat = 'no-repeat';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'geisha-name';
+    nameDiv.textContent = row.name;
+
+    const valueDiv = document.createElement('div');
+    valueDiv.className = 'geisha-value';
+    valueDiv.textContent = `${row.value} pont`;
+
+    geishaDiv.appendChild(geishaImage);
+    geishaDiv.appendChild(nameDiv);
+    geishaDiv.appendChild(valueDiv);
 
     const p1Gifts = createGiftStack(row.player1, row.id, 'player1');
 
@@ -395,7 +440,11 @@ function buildHand() {
     button.className = 'card-button';
     button.setAttribute('data-card', card);
     button.title = Game.cardName(card);
-    
+    button.style.backgroundImage = `url('${getCardAssetPath(card)}')`;
+    button.style.backgroundSize = 'cover';
+    button.style.backgroundPosition = 'center';
+    button.style.backgroundRepeat = 'no-repeat';
+
     button.disabled = !pendingAction || pendingAction.mode !== 'select';
     
     if (pendingAction && pendingAction.selected.indexOf(index) !== -1) {
