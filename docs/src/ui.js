@@ -345,7 +345,7 @@ function buildBoard() {
     const geishaDiv = document.createElement('div');
     geishaDiv.className = 'geisha-card';
     geishaDiv.style.backgroundImage = "url('../Cards.png')";
-    geishaDiv.style.backgroundSize = '464px 84px';
+    geishaDiv.style.backgroundSize = '464px 168px';
     geishaDiv.style.backgroundPosition = `${-58 * (row.id - 1)}px 0`;
     geishaDiv.style.backgroundRepeat = 'no-repeat';
     geishaDiv.style.width = '80px';

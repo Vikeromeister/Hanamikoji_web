@@ -278,8 +278,8 @@ body {
   border-radius: 8px;
   display: block;
   padding: 0;
-  background-size: 464px 84px;
-  background-position: 0 0;
+  background-size: 464px 168px;
+  background-position: 0 -84px;
   background-image: url('../Cards.png');
   background-repeat: no-repeat;
   font-family: inherit;
@@ -409,8 +409,8 @@ body {
   display: block;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  background-size: 464px 84px;
-  background-position: 0 0;
+  background-size: 464px 168px;
+  background-position: 0 -84px;
   background-image: url('../Cards.png');
   background-repeat: no-repeat;
   font-family: inherit;
