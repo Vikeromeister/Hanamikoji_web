@@ -275,25 +275,20 @@ body {
   width: 58px;
   height: 84px;
   border: none;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+  border-radius: 8px;
+  display: block;
   padding: 0;
-  background-size: 464px 120px;
+  background-size: 464px 84px;
   background-position: 0 0;
   background-image: url('../Cards.png');
   background-repeat: no-repeat;
-  color: var(--text);
   font-family: inherit;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
 }
 
-/* Gift card type backgrounds */
+/* Gift card type backgrounds (58px per card) */
 .gift-card[data-card="1"] { background-position: 0 0; }
 .gift-card[data-card="2"] { background-position: -58px 0; }
 .gift-card[data-card="3"] { background-position: -116px 0; }
@@ -323,16 +318,15 @@ body {
 }
 
 .geisha-icon {
-  font-size: 2.5rem;
+  display: none;
 }
 
 .gift-icon {
-  font-size: 1.35rem;
+  display: none;
 }
 
 .gift-value {
-  font-size: 0.65rem;
-  opacity: 0.85;
+  display: none;
 }
 
 .geisha-card {
@@ -407,50 +401,40 @@ body {
 }
 
 .card-button {
-  width: 76px;
-  min-height: 110px;
+  width: 58px;
+  height: 84px;
   padding: 0;
   border: none;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  border-radius: 8px;
+  display: block;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  font-size: 0.85rem;
-  text-align: center;
-  color: var(--text);
-  background-size: 464px 120px;
+  background-size: 464px 84px;
   background-position: 0 0;
   background-image: url('../Cards.png');
   background-repeat: no-repeat;
-  line-height: 1.1;
   font-family: inherit;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .card-button:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(244, 211, 94, 0.2);
-  filter: brightness(1.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.05);
 }
 
 .card-button.selected {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(244, 211, 94, 0.4);
-  border-color: rgba(244, 211, 94, 0.8);
-  background-color: rgba(244, 211, 94, 0.2);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(244, 211, 94, 0.3);
 }
 
 .card-button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
   transform: none;
 }
 
-/* Card type backgrounds - position in spritesheet */
+/* Card type backgrounds - position in spritesheet (58px per card) */
 .card-button[data-card="1"] { background-position: 0 0; }
 .card-button[data-card="2"] { background-position: -58px 0; }
 .card-button[data-card="3"] { background-position: -116px 0; }

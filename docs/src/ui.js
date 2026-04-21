@@ -343,19 +343,13 @@ function buildBoard() {
 
     const p2Gifts = createGiftStack(row.player2, row.id, 'player2');
     const geishaDiv = document.createElement('div');
-    geishaDiv.className = `geisha-card ${GEISHA_COLORS[row.id]}`;
-    const geishaIconDiv = document.createElement('div');
-    geishaIconDiv.className = 'geisha-icon';
-    geishaIconDiv.textContent = '👩';
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'geisha-icon';
-    iconDiv.textContent = CARD_ICONS[row.id];
-    const valueDiv = document.createElement('div');
-    valueDiv.className = 'geisha-value';
-    valueDiv.textContent = row.value;
-    geishaDiv.appendChild(geishaIconDiv);
-    geishaDiv.appendChild(iconDiv);
-    geishaDiv.appendChild(valueDiv);
+    geishaDiv.className = 'geisha-card';
+    geishaDiv.style.backgroundImage = "url('../Cards.png')";
+    geishaDiv.style.backgroundSize = '464px 84px';
+    geishaDiv.style.backgroundPosition = `${-58 * (row.id - 1)}px 0`;
+    geishaDiv.style.backgroundRepeat = 'no-repeat';
+    geishaDiv.style.width = '80px';
+    geishaDiv.style.height = '100px';
 
     const p1Gifts = createGiftStack(row.player1, row.id, 'player1');
 
