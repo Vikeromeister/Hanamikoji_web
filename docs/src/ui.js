@@ -30,7 +30,7 @@ const CARD_ICONS = {
   7: '💐'
 };
 
-const ASSET_BASE = '../assets/';
+const ASSET_BASE = 'assets/';
 const CARD_IMAGE_FILES = {
   1: 'gift_burger_2pts.png',
   2: 'gift_cardigan_3pts.png',
@@ -375,7 +375,7 @@ function buildBoard() {
 
     const p2Gifts = createGiftStack(row.player2, row.id, 'player2');
     const geishaDiv = document.createElement('div');
-    geishaDiv.className = 'geisha-card';
+    geishaDiv.className = `geisha-card geisha-${row.id}`;
 
     const geishaImage = document.createElement('div');
     geishaImage.className = 'geisha-image';
