@@ -297,15 +297,8 @@ function createGiftStack(count, rowId, playerLabel) {
 
   for (let i = 0; i < Math.min(count, 3); i++) {  // Show up to 3 cards
     const giftCard = document.createElement('div');
-    giftCard.className = `gift-card ${GEISHA_COLORS[rowId]}`;
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'gift-icon';
-    iconDiv.textContent = CARD_ICONS[rowId];
-    const valueDiv = document.createElement('div');
-    valueDiv.className = 'gift-value';
-    valueDiv.textContent = Game.cardValue(rowId);
-    giftCard.appendChild(iconDiv);
-    giftCard.appendChild(valueDiv);
+    giftCard.className = 'gift-card';
+    giftCard.setAttribute('data-card', rowId);
     stack.appendChild(giftCard);
   }
 
@@ -405,19 +398,9 @@ function buildHand() {
   hand.forEach((card, index) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = `card-button ${GEISHA_COLORS[card]}`;
+    button.className = 'card-button';
+    button.setAttribute('data-card', card);
     button.title = Game.cardName(card);
-    
-    const iconDiv = document.createElement('div');
-    iconDiv.className = 'card-icon';
-    iconDiv.textContent = CARD_ICONS[card];
-    
-    const valueDiv = document.createElement('div');
-    valueDiv.className = 'card-value';
-    valueDiv.textContent = Game.cardValue(card);
-    
-    button.appendChild(iconDiv);
-    button.appendChild(valueDiv);
     
     button.disabled = !pendingAction || pendingAction.mode !== 'select';
     
