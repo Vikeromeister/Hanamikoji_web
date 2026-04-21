@@ -249,7 +249,7 @@ body {
 
 .geisha-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  grid-template-columns: repeat(7, 100px);
   gap: 16px;
   align-items: start;
 }
@@ -265,11 +265,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 92px;
+  gap: 0;
 }
 
 .gift-stack-empty {
-  min-height: 92px;
+  display: none;
 }
 
 .gift-card {
@@ -358,6 +358,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  justify-content: flex-start;
 }
 
 .deck-card {
