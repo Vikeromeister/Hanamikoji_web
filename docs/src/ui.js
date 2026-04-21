@@ -47,12 +47,16 @@ const elements = {
   transitionScreen: document.getElementById('transition-screen'),
   transitionTitle: document.getElementById('transition-title'),
   transitionText: document.getElementById('transition-text'),
-  transitionButton: document.getElementById('transition-button')
+  transitionButton: document.getElementById('transition-button'),
+  modeSelectionScreen: document.getElementById('mode-selection-screen'),
+  singlePlayerButton: document.getElementById('single-player-button'),
+  multiplayerButton: document.getElementById('multiplayer-button')
 };
 
 let pendingAction = null;
 let offerChoices = null;
 let transition = null;
+let gameMode = null;
 
 function updateStatus() {
   elements.message.textContent = Game.state.message;
@@ -62,11 +66,17 @@ function other(player) {
   return player === 1 ? 2 : 1;
 }
 
+function isComputer(player) {
+  return gameMode === 'single' && player === 2;
+}
+
 function showTransition(player) {
   transition = {
     player,
-    title: `Player ${player}'s turn`,
-    text: 'After acknowledging, the upcoming player\'s hand will be visible. Please do not look at the screen.'
+    title: isComputer(player) ? 'Számítógép köre' : `Player ${player}'s turn`,
+    text: isComputer(player)
+      ? 'Kattints a folytatáshoz, a számítógép most választ.'
+      : 'After acknowledging, the upcoming player\'s hand will be visible. Please do not look at the screen.'
   };
   render();
 }
@@ -76,12 +86,139 @@ function hideTransition() {
   render();
 }
 
+function shuffleArray(array) {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+function chooseRandom(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function getRandomSelection(count, max) {
+  return shuffleArray(Array.from({ length: max }, (_, index) => index))
+    .slice(0, count)
+    .sort((a, b) => a - b);
+}
+
+function resolveAIChoice() {
+  if (!offerChoices) {
+    hideTransition();
+    return;
+  }
+
+  const handler = offerChoices.handler;
+  const choiceIndex = Math.floor(Math.random() * offerChoices.options.length);
+  offerChoices = null;
+  pendingAction = null;
+  hideTransition();
+  handler(choiceIndex);
+}
+
+function executeAITurn() {
+  if (Game.state.gameOver || !isComputer(Game.state.currentPlayer)) {
+    return;
+  }
+
+  const player = Game.state.currentPlayer;
+  const hand = Game.getHand(player);
+  const possibleActions = [];
+
+  if (Game.canUseAction(player, 'secret') && hand.length >= 1) {
+    possibleActions.push('secret');
+  }
+  if (Game.canUseAction(player, 'tradeoff') && hand.length >= 2) {
+    possibleActions.push('tradeoff');
+  }
+  if (Game.canUseAction(player, 'gift') && hand.length >= 3) {
+    possibleActions.push('gift');
+  }
+  if (Game.canUseAction(player, 'competition') && hand.length >= 4) {
+    possibleActions.push('competition');
+  }
+
+  if (possibleActions.length === 0) {
+    Game.state.message = 'A számítógép nem tud mozdulni.';
+    render();
+    return;
+  }
+
+  const action = chooseRandom(possibleActions);
+  const selected = getRandomSelection(
+    action === 'secret' ? 1 : action === 'tradeoff' ? 2 : action === 'gift' ? 3 : 4,
+    hand.length
+  );
+
+  switch (action) {
+    case 'secret':
+      Game.performSecret(player, selected[0]);
+      break;
+    case 'tradeoff':
+      Game.performTradeoff(player, selected);
+      break;
+    case 'gift':
+      Game.performGift(player, selected, Math.floor(Math.random() * 3));
+      break;
+    case 'competition':
+      Game.performCompetition(player, selected, Math.random() < 0.5 ? 1 : 2);
+      break;
+  }
+
+  if (!Game.state.gameOver) {
+    showTransition(Game.state.currentPlayer);
+  } else {
+    render();
+  }
+}
+
+function showModeSelection() {
+  gameMode = null;
+  pendingAction = null;
+  offerChoices = null;
+  transition = null;
+  elements.modeSelectionScreen.classList.remove('hidden');
+  Game.state.message = 'Válaszd ki a játékmódot.';
+  render();
+}
+
+function hideModeSelection() {
+  elements.modeSelectionScreen.classList.add('hidden');
+}
+
+function startNewGame(mode) {
+  gameMode = mode;
+  hideModeSelection();
+  Game.startGame();
+  pendingAction = null;
+  offerChoices = null;
+  transition = null;
+
+  Game.state.message = mode === 'single'
+    ? 'Egyjátékos mód. Te kezded.'
+    : 'Kétjátékos mód. Az első játékos kezd.';
+
+  render();
+}
+
 function acknowledgeTransition() {
   if (!transition) {
     return;
   }
 
+  if (offerChoices && gameMode === 'single' && transition.player === 2) {
+    resolveAIChoice();
+    return;
+  }
+
   hideTransition();
+
+  if (gameMode === 'single' && Game.state.currentPlayer === 2 && !Game.state.gameOver) {
+    executeAITurn();
+  }
 }
 
 function createGiftStack(count, rowId, playerLabel) {
@@ -461,16 +598,19 @@ function render() {
 }
 
 function restartGame() {
-  Game.startGame();
-  pendingAction = null;
-  offerChoices = null;
-  render();
+  if (gameMode === null) {
+    showModeSelection();
+    return;
+  }
+
+  startNewGame(gameMode);
 }
 
 export function startApp() {
-  Game.startGame();
-  render();
-  
+  showModeSelection();
+
+  elements.singlePlayerButton.addEventListener('click', () => startNewGame('single'));
+  elements.multiplayerButton.addEventListener('click', () => startNewGame('multi'));
   elements.secretButton.addEventListener('click', () => setPendingAction('secret'));
   elements.tradeoffButton.addEventListener('click', () => setPendingAction('tradeoff'));
   elements.giftButton.addEventListener('click', () => setPendingAction('gift'));
