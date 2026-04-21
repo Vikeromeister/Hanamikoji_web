@@ -71,6 +71,10 @@ function isComputer(player) {
 }
 
 function showTransition(player) {
+  if (gameMode === 'single') {
+    return;
+  }
+
   transition = {
     player,
     title: isComputer(player) ? 'Számítógép köre' : `Player ${player}'s turn`,
@@ -169,7 +173,11 @@ function executeAITurn() {
   }
 
   if (!Game.state.gameOver) {
-    showTransition(Game.state.currentPlayer);
+    if (gameMode === 'single') {
+      render();
+    } else {
+      showTransition(Game.state.currentPlayer);
+    }
   } else {
     render();
   }
@@ -504,14 +512,22 @@ function confirmSelection() {
       Game.performSecret(player, selected[0]);
       pendingAction = null;
       if (!Game.state.gameOver) {
-        showTransition(Game.state.currentPlayer);
+        if (gameMode === 'single' && Game.state.currentPlayer === 2) {
+          executeAITurn();
+        } else {
+          showTransition(Game.state.currentPlayer);
+        }
       }
       break;
     case 'tradeoff':
       Game.performTradeoff(player, selected);
       pendingAction = null;
       if (!Game.state.gameOver) {
-        showTransition(Game.state.currentPlayer);
+        if (gameMode === 'single' && Game.state.currentPlayer === 2) {
+          executeAITurn();
+        } else {
+          showTransition(Game.state.currentPlayer);
+        }
       }
       break;
     case 'gift':
@@ -546,7 +562,11 @@ function prepareGiftResponse(player, selectedIndex) {
   };
   
   Game.state.message = 'The opponent is choosing from the offered cards.';
-  showTransition(other(player));
+  if (gameMode === 'single') {
+    resolveAIChoice();
+  } else {
+    showTransition(other(player));
+  }
 }
 
 function prepareCompetitionResponse(player, selectedIndex) {
@@ -575,7 +595,11 @@ function prepareCompetitionResponse(player, selectedIndex) {
   };
   
   Game.state.message = 'The opponent is choosing between the pairs.';
-  showTransition(other(player));
+  if (gameMode === 'single') {
+    resolveAIChoice();
+  } else {
+    showTransition(other(player));
+  }
 }
 
 function render() {
