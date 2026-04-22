@@ -259,6 +259,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 16px;
+  overflow: visible;
 }
 
 .gift-stack {
@@ -289,7 +290,7 @@ body {
 }
 
 .gift-card + .gift-card {
-  margin-top: -46px;
+  margin-top: 16px;
 }
 
 .gift-count {
@@ -359,6 +360,7 @@ body {
   align-items: center;
   gap: 16px;
   justify-content: flex-start;
+  margin-top: 16px;
 }
 
 .deck-card {
@@ -394,6 +396,7 @@ body {
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: center;
+  overflow: visible;
 }
 
 .card-button {
