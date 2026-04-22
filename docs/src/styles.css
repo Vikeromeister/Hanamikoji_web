@@ -54,7 +54,7 @@ body {
   width: 100px;
   height: 120px;
   background-image: url('../assets/background_card.png');
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   border-radius: 0;
@@ -295,7 +295,7 @@ body {
   border-radius: 0;
   display: block;
   padding: 0;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   font-family: inherit;
@@ -356,7 +356,7 @@ body {
   height: 120px;
   border-radius: 0;
   box-shadow: none;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -385,7 +385,7 @@ body {
   width: 100px;
   height: 120px;
   background-image: url('../assets/background_card.png');
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   border: none;
